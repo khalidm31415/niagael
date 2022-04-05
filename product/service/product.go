@@ -13,6 +13,7 @@ type ProductService interface {
 	UpdateProduct(ctx context.Context, id string, title *string, price *int32) error
 	DeleteProduct(ctx context.Context, id string) error
 	SearchProducts(ctx context.Context, query string) (*[]entity.Product, error)
+	GetProducts(ctx context.Context, ids []string) (*[]entity.Product, error)
 }
 
 type productService struct {
@@ -88,6 +89,14 @@ func (p productService) DeleteProduct(ctx context.Context, id string) error {
 func (p productService) SearchProducts(ctx context.Context, query string) (*[]entity.Product, error) {
 	var products []entity.Product
 	if err := p.db.Where("MATCH(title) AGAINST(? IN NATURAL LANGUAGE MODE)", query).Find(&products).Error; err != nil {
+		return nil, err
+	}
+	return &products, nil
+}
+
+func (p productService) GetProducts(ctx context.Context, ids []string) (*[]entity.Product, error) {
+	var products []entity.Product
+	if err := p.db.Where("id IN ?", ids).Find(&products).Error; err != nil {
 		return nil, err
 	}
 	return &products, nil

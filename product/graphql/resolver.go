@@ -63,3 +63,17 @@ func (r resolver) SearchProducts(ctx context.Context, args struct {
 	}
 	return &productResolvers, nil
 }
+
+func (r resolver) GetProducts(ctx context.Context, args struct {
+	IDs []string
+}) (*[]ProductResolver, error) {
+	products, err := r.productService.GetProducts(ctx, args.IDs)
+	if err != nil {
+		return nil, err
+	}
+	productResolvers := []ProductResolver{}
+	for _, p := range *products {
+		productResolvers = append(productResolvers, ProductResolver{product: p})
+	}
+	return &productResolvers, nil
+}
