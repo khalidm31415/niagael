@@ -1,5 +1,18 @@
 # niagael
-E-commerce backend API.
+E-commerce backend API. The title sounds weird, honestly. It's just [the equivalent of "e-commerce" in bahasa](https://twitter.com/ivanlanin/status/846681485750878208). I kinda regret it, but changing the name would require quite some effort to change a couple of variable names.
+
+## Features and Limitations
+- Create an account identified with username, password, and display name
+- CRUD operations for products to be sold
+- Search products by its titles
+- Add some products to your shopping cart
+- Each user only have one cart
+- List all product details in your cart, see the total price of the products in your cart
+- Checkout all the products in your cart; create a payment order/invoice
+- Pay or cancel your payment order
+
+## Flow diagram
+![flow](niagael-diagram.jpg)
 
 ## Running the server
 ```
