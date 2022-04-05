@@ -58,7 +58,7 @@ func main() {
 	app.Post("/product/graphql", graphqlHandler(&relay.Handler{Schema: graphqlSchema}))
 
 	app.Get("/product/graphiql", func(c *fiber.Ctx) error {
-		return c.SendFile("./web/graphiql.html")
+		return c.SendFile("web/graphiql.html")
 	})
 
 	port := env["PORT"]

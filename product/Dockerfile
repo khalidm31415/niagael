@@ -12,4 +12,5 @@ FROM alpine:latest
 RUN apk add bash
 COPY --from=build /bin/product /bin/product
 COPY .env .
+COPY /web /web
 CMD ["/bin/product"]
