@@ -50,5 +50,13 @@ func (r resolver) UpsertCartItem(ctx context.Context, args struct {
 	}
 	ok := true
 	return &ok, nil
+}
 
+func (r resolver) ClearCart(ctx context.Context) (*bool, error) {
+	if err := r.cartService.ClearCart(ctx); err != nil {
+		ok := false
+		return &ok, err
+	}
+	ok := true
+	return &ok, nil
 }

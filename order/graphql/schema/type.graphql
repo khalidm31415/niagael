@@ -1,0 +1,20 @@
+type OrderItem {
+    id: String
+    productId: String
+    productTitle: String
+    unitPrice: Int
+    quantity: Int
+}
+
+enum OrderStatus {
+    WAITING_FOR_PAYMENT
+    CANCELLED
+    PAYMENT_COMPLETED
+}
+
+type Order {
+    id: String
+    orderItems: [OrderItem!]
+    totalPrice: Int
+    status: OrderStatus
+}

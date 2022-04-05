@@ -12,6 +12,7 @@ import (
 type CartService interface {
 	UpsertCartItem(ctx context.Context, productID string, quantity int32) error
 	MyCart(ctx context.Context) (*[]entity.CartItem, error)
+	ClearCart(ctx context.Context) error
 }
 
 type cartService struct {
@@ -75,4 +76,17 @@ func (c cartService) MyCart(ctx context.Context) (*[]entity.CartItem, error) {
 	}
 
 	return &cartItems, nil
+}
+
+func (c cartService) ClearCart(ctx context.Context) error {
+	userID := ctx.Value("userID").(string)
+	if userID == "" {
+		return errors.New("unauthorized")
+	}
+
+	if err := c.db.Where("user_id = ?", userID).Delete(&entity.CartItem{}).Error; err != nil {
+		zap.S().Error(err)
+		return err
+	}
+	return nil
 }

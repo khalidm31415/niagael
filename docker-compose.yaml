@@ -72,7 +72,32 @@ services:
     depends_on:
       - cart_db
 
+  order_db:
+    build: 
+      context: ./order
+      dockerfile: Dockerfile.postgres
+    restart: on-failure
+    ports:
+      - "5438:5432"
+    volumes:
+      - order_db_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: "${ORDER_POSTGRES_USER}"
+      POSTGRES_PASSWORD: "${ORDER_POSTGRES_PASSWORD}"
+      POSTGRES_DB: "${ORDER_POSTGRES_DB}"
+  order_api:
+    build: ./order
+    restart: on-failure
+    command: /bin/order
+    volumes:
+      - .:/app
+    ports:
+      - "2721:2721"
+    depends_on:
+      - order_db
+
 volumes:
   api_gateway_db_data: {}
   product_db_data: {}
   cart_db_data: {}
+  order_db_data: {}

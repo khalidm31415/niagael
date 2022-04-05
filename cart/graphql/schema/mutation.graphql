@@ -1,3 +1,4 @@
 type Mutation {
   upsertCartItem(productId: String!, quantity: Int!): Boolean
+  clearCart: Boolean
 }

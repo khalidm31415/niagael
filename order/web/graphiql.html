@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <title>GraphiQL</title>
+  <meta name="robots" content="noindex" />
+  <style>
+    html,
+    body {
+      height: 100%;
+      margin: 0;
+      overflow: hidden;
+      width: 100%;
+    }
+  </style>
+  <link href="https://unpkg.com/graphiql@1.0.6/graphiql.min.css" rel="stylesheet" />
+  
+  <script src="https://unpkg.com/react@17.0.1/umd/react.production.min.js" integrity="sha384-YF0qbrX3+TW1Oyow2MYZpkEMq34QcYzbTJbSb9K0sdeykm4i4kTCSrsYeH8HX11w" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@17.0.1/umd/react-dom.production.min.js" integrity="sha384-DHlzXk2aXirrhqAkoaI5lzdgwWB07jUHz7DJGmS4Vlvt5U/ztRy+Yr8oSgQw5QaE" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/graphiql@1.0.6/graphiql.min.js" integrity="sha384-Yw6OYWAyMP1eFtYllebqVcwjwAN2WgTT0k/9qNCP6lsV+7LM5bJAKyJFOnn2H4G0" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/fetch/2.0.1/fetch.min.js" integrity="sha384-n1aEDDlNGZ7M66+CY9g6jNWsNu8h5tYG9tAvu8d1sIV5yZNgoDRydCKGc7pn+nPy" crossorigin="anonymous"></script>
+</head>
+
+<body>
+  <script>
+    // Collect the URL parameters
+    var parameters = {};
+    window.location.search.substr(1).split('&').forEach(function (entry) {
+      var eq = entry.indexOf('=');
+      if (eq >= 0) {
+        parameters[decodeURIComponent(entry.slice(0, eq))] =
+          decodeURIComponent(entry.slice(eq + 1));
+      }
+    });
+    // Produce a Location query string from a parameter object.
+    function locationQuery(params, location) {
+      return (location ? location : '') + '?' + Object.keys(params).map(function (key) {
+        return encodeURIComponent(key) + '=' +
+          encodeURIComponent(params[key]);
+      }).join('&');
+    }
+    // Derive a fetch URL from the current URL, sans the GraphQL parameters.
+    var graphqlParamNames = {
+      query: true,
+      variables: true,
+      operationName: true
+    };
+    var otherParams = {};
+    for (var k in parameters) {
+      if (parameters.hasOwnProperty(k) && graphqlParamNames[k] !== true) {
+        otherParams[k] = parameters[k];
+      }
+    }
+
+    // We don't use safe-serialize for location, because it's not client input.
+    var fetchURL = locationQuery(otherParams, '/order/graphql');
+
+    // Defines a GraphQL fetcher using the fetch API.
+    function graphQLFetcher(graphQLParams, opts = { headers: {} }) {
+      let headers = opts.headers;
+      // Convert headers to an object.
+      if (typeof headers === 'string') {
+        headers = JSON.parse(opts.headers);
+      }
+      return fetch(fetchURL, {
+        method: 'post',
+        headers: Object.assign(
+          {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+          },
+          headers,
+        ),
+        body: JSON.stringify(graphQLParams),
+        credentials: 'include',
+      }).then(function (response) {
+        return response.text();
+      }).then(function (responseBody) {
+        try {
+          return JSON.parse(responseBody);
+        } catch (error) {
+          return responseBody;
+        }
+      });
+    }
+
+    let fetcher = graphQLFetcher;
+    
+    // When the query and variables string is edited, update the URL bar so
+    // that it can be easily shared.
+    function onEditQuery(newQuery) {
+      parameters.query = newQuery;
+    }
+    function onEditVariables(newVariables) {
+      parameters.variables = newVariables;
+    }
+    function onEditOperationName(newOperationName) {
+      parameters.operationName = newOperationName;
+    }
+    function updateURL() {
+      var cleanParams = Object.keys(parameters).filter(function (v) {
+        return parameters[v];
+      }).reduce(function (old, v) {
+        old[v] = parameters[v];
+        return old;
+      }, {});
+
+      history.replaceState(null, null, locationQuery(cleanParams) + window.location.hash);
+    }
+    // Render <GraphiQL /> into the body.
+    ReactDOM.render(
+      React.createElement(GraphiQL, {
+        fetcher,
+        onEditQuery: onEditQuery,
+        onEditVariables: onEditVariables,
+        onEditOperationName: onEditOperationName,
+        query: null,
+        response: null,
+        variables: null,
+        operationName: null,
+        editorTheme: null,
+        websocketConnectionParams: null,
+        headerEditorEnabled: true,
+      }),
+      document.body
+    );
+  </script>
+</body>
+
+</html>

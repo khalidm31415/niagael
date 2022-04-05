@@ -1,0 +1,5 @@
+type Mutation {
+  checkoutCart: Order
+  payOrder(orderId: String!): Boolean
+  cancelOrder(orderId: String!): Boolean
+}
