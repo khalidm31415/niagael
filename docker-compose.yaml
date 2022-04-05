@@ -10,7 +10,6 @@ services:
       - "5436:5432"
     volumes:
       - api_gateway_db_data:/var/lib/postgresql/data
-    restart: always
     environment:
       POSTGRES_USER: "${API_GATEWAY_POSTGRES_USER}"
       POSTGRES_PASSWORD: "${API_GATEWAY_POSTGRES_PASSWORD}"
@@ -48,6 +47,32 @@ services:
       - "2719:2719"
     depends_on:
       - product_db
+
+  cart_db:
+    build: 
+      context: ./cart
+      dockerfile: Dockerfile.postgres
+    restart: on-failure
+    ports:
+      - "5437:5432"
+    volumes:
+      - cart_db_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: "${CART_POSTGRES_USER}"
+      POSTGRES_PASSWORD: "${CART_POSTGRES_PASSWORD}"
+      POSTGRES_DB: "${CART_POSTGRES_DB}"
+  cart_api:
+    build: ./cart
+    restart: on-failure
+    command: /bin/cart
+    volumes:
+      - .:/app
+    ports:
+      - "2720:2720"
+    depends_on:
+      - cart_db
+
 volumes:
   api_gateway_db_data: {}
   product_db_data: {}
+  cart_db_data: {}

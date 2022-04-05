@@ -1,0 +1,11 @@
+type CartItem {
+    productId: String
+    productTitle: String
+    unitPrice: Int
+    quantity: Int
+}
+
+type Cart {
+    cartItems: [CartItem!]
+    totalPrice: Int
+}

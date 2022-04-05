@@ -56,7 +56,19 @@ func NewRouter(authService service.AuthService) *gin.Engine {
 		}
 		proxy := &httputil.ReverseProxy{Director: director}
 		proxy.ServeHTTP(c.Writer, c.Request)
+	})
 
+	r.POST("/cart/graphql", authMiddleware.MiddlewareFunc(), func(c *gin.Context) {
+		user, _ := c.Get(middelware.IdentityKey)
+		userID := user.(entity.User).ID
+		director := func(req *http.Request) {
+			req.URL.Scheme = "http"
+			req.URL.Host = "cart_api:2720"
+			req.Host = "cart_api:2720"
+			req.Header["X-user-id"] = []string{userID}
+		}
+		proxy := &httputil.ReverseProxy{Director: director}
+		proxy.ServeHTTP(c.Writer, c.Request)
 	})
 
 	return r
