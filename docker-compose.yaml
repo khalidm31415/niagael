@@ -1,0 +1,53 @@
+version: "3.9"
+   
+services:
+  api_gateway_db:
+    build: 
+      context: ./api_gateway
+      dockerfile: Dockerfile.postgres
+    restart: on-failure
+    ports:
+      - "5436:5432"
+    volumes:
+      - api_gateway_db_data:/var/lib/postgresql/data
+    restart: always
+    environment:
+      POSTGRES_USER: "${API_GATEWAY_POSTGRES_USER}"
+      POSTGRES_PASSWORD: "${API_GATEWAY_POSTGRES_PASSWORD}"
+      POSTGRES_DB: "${API_GATEWAY_POSTGRES_DB}"
+  api_gateway_api:
+    build: ./api_gateway
+    restart: on-failure
+    command: /bin/api_gateway
+    volumes:
+      - .:/app
+    ports:
+      - "2718:2718"
+    depends_on:
+      - api_gateway_db
+
+  product_db:
+    image: mysql:5.7
+    restart: on-failure
+    ports:
+      - "3307:3306"
+    volumes:
+      - product_db_data:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: "${PRODUCT_MYSQL_ROOT_PASSWORD}"
+      MYSQL_DATABASE: "${PRODUCT_MYSQL_DATABASE}"
+      MYSQL_USER: "${PRODUCT_MYSQL_USER}"
+      MYSQL_PASSWORD: "${PRODUCT_MYSQL_PASSWORD}"
+  product_api:
+    build: ./product
+    restart: on-failure
+    command: /bin/product
+    volumes:
+      - .:/app
+    ports:
+      - "2719:2719"
+    depends_on:
+      - product_db
+volumes:
+  api_gateway_db_data: {}
+  product_db_data: {}

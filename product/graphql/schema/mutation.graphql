@@ -1,0 +1,5 @@
+type Mutation {
+  createProduct(title: String!, price: Int!): Boolean
+  updateProduct(id: String!, title: String, price: Int): Boolean
+  deleteProduct(id: String!): Boolean
+}
