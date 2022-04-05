@@ -54,7 +54,6 @@ func main() {
 		return c.SendStatus(fiber.StatusOK)
 	})
 
-	app.Get("/product/graphql", graphqlHandler(&relay.Handler{Schema: graphqlSchema}))
 	app.Post("/product/graphql", graphqlHandler(&relay.Handler{Schema: graphqlSchema}))
 
 	app.Get("/product/graphiql", func(c *fiber.Ctx) error {

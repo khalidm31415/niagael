@@ -5,6 +5,7 @@ import (
 	middelware "api_gateway/middleware"
 	"api_gateway/service"
 	"net/http"
+	"net/http/httputil"
 
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
@@ -41,9 +42,22 @@ func NewRouter(authService service.AuthService) *gin.Engine {
 			"userID":   user.(entity.User).ID,
 			"username": user.(entity.User).Username,
 		})
-
 	})
 	r.POST("/auth/logout", authMiddleware.LogoutHandler)
+
+	r.POST("/product/graphql", authMiddleware.MiddlewareFunc(), func(c *gin.Context) {
+		user, _ := c.Get(middelware.IdentityKey)
+		userID := user.(entity.User).ID
+		director := func(req *http.Request) {
+			req.URL.Scheme = "http"
+			req.URL.Host = "product_api:2719"
+			req.Host = "product_api:2719"
+			req.Header["X-user-id"] = []string{userID}
+		}
+		proxy := &httputil.ReverseProxy{Director: director}
+		proxy.ServeHTTP(c.Writer, c.Request)
+
+	})
 
 	return r
 }
