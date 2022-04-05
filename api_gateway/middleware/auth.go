@@ -37,7 +37,7 @@ func NewAuthtMiddleware(authService service.AuthService) *jwt.GinJWTMiddleware {
 			user, err := authService.Authenticate(username, password)
 			if err != nil {
 				zap.S().Error(err)
-
+				return nil, jwt.ErrFailedAuthentication
 			}
 			return user.ID, nil
 
@@ -52,7 +52,10 @@ func NewAuthtMiddleware(authService service.AuthService) *jwt.GinJWTMiddleware {
 		},
 		IdentityHandler: func(c *gin.Context) interface{} {
 			claims := jwt.ExtractClaims(c)
-			userID := claims[IdentityKey].(string)
+			userID, ok := claims[IdentityKey].(string)
+			if !ok {
+				return jwt.ErrFailedAuthentication
+			}
 			user, err := authService.GetByID(userID)
 			if err == gorm.ErrRecordNotFound {
 				return nil
