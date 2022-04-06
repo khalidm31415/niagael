@@ -27,3 +27,12 @@ Postman collection: https://www.getpostman.com/collections/0db38d5bff917d1ef943
 
 ## Demo
 [Video link](https://drive.google.com/file/d/1QW1ZB1IBC_WhRC3JFTuPZx50TzDPkKLc/view?usp=sharing). You might have to download the video first to watch it in higher resolution.
+
+## Unit Test
+I only implemented one unit test, I'm out of time to implement it 🙏‍‍.
+### Cart Service
+```
+cd ./cart
+go mod tidy
+go test ./...
+```

@@ -3,18 +3,21 @@ module cart
 go 1.18
 
 require (
+	github.com/DATA-DOG/go-sqlmock v1.5.0
 	github.com/gofiber/adaptor/v2 v2.1.22
 	github.com/gofiber/fiber/v2 v2.31.0
 	github.com/graph-gophers/graphql-go v1.3.0
 	github.com/joho/godotenv v1.4.0
 	github.com/machinebox/graphql v0.2.2
 	go.uber.org/zap v1.21.0
+	gorm.io/driver/mysql v1.3.3
 	gorm.io/driver/postgres v1.3.3
 	gorm.io/gorm v1.23.4
 )
 
 require (
 	github.com/andybalholm/brotli v1.0.4 // indirect
+	github.com/go-sql-driver/mysql v1.6.0 // indirect
 	github.com/gofiber/utils v0.1.2 // indirect
 	github.com/jackc/chunkreader/v2 v2.0.1 // indirect
 	github.com/jackc/pgconn v1.11.0 // indirect
