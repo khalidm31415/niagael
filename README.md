@@ -4,9 +4,11 @@ E-commerce backend API. The title sounds weird, honestly. It's just [the equival
 ## Features and Limitations
 - Create an account identified with username, password, and display name
 - CRUD operations for products to be sold
+- The pproducts are only identified by title and price
 - Search products by its titles
 - Add some products to your shopping cart
 - Each user only have one cart
+- It is not restricted to buy your own product
 - List all product details in your cart, see the total price of the products in your cart
 - Checkout all the products in your cart; create a payment order/invoice
 - Pay or cancel your payment order
